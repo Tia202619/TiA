@@ -3,8 +3,6 @@ const supabaseUrl = 'https://YOUR-SUPABASE-URL.supabase.co';
 const supabaseKey = 'YOUR-SUPABASE-ANON-KEY';
 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-const form = document.getElementById('surveyForm');
-
 // Get slider elements
 const comfortSlider = document.getElementById('comfortSlider');
 const vulnerabilitySlider = document.getElementById('vulnerabilitySlider');
@@ -15,24 +13,24 @@ const comfortValue = document.getElementById('comfortValue');
 const vulnerabilityValue = document.getElementById('vulnerabilityValue');
 const punctualityValue = document.getElementById('punctualityValue');
 
-// Update slider values on change
+// Update slider values on input and automatically save to Supabase
 comfortSlider.oninput = function() {
     comfortValue.textContent = comfortSlider.value;
+    recordSurveyData();
 };
 
 vulnerabilitySlider.oninput = function() {
     vulnerabilityValue.textContent = vulnerabilitySlider.value;
+    recordSurveyData();
 };
 
 punctualitySlider.oninput = function() {
     punctualityValue.textContent = punctualitySlider.value;
+    recordSurveyData();
 };
 
-// Handle form submission
-form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    // Get slider values
+// Function to record survey data
+async function recordSurveyData() {
     const comfort = comfortSlider.value;
     const vulnerability = vulnerabilitySlider.value;
     const punctuality = punctualitySlider.value;
@@ -40,15 +38,13 @@ form.addEventListener('submit', async (e) => {
     // Insert data into Supabase
     const { data, error } = await supabase
         .from('survey_responses')  // Change this to your table name
-        .insert([
+        .upsert([
             { comfort: comfort, vulnerability: vulnerability, punctuality: punctuality }
         ]);
 
     if (error) {
         console.error('Error inserting survey response:', error);
-        alert('Error submitting the survey.');
     } else {
-        alert('Survey submitted successfully!');
-        form.reset(); // Reset form after submission
+        console.log('Survey data recorded:', data);
     }
-});
+}
