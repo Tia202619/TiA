@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vehicle Experience Survey</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .question {
+            margin-bottom: 24px;
+        }
+        .question p {
+            font-weight: bold;
+        }
+        .slider {
+            width: 100%;
+        }
+        .slider-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .slider-value {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Vehicle Experience Survey</h2>
+    <form id="surveyForm">
+        <!-- Comfort -->
+        <div class="question">
+            <p>1. Comfort – I am at ease while the vehicle is en route.</p>
+            <div class="slider-container">
+                <span>0</span>
+                <input type="range" id="comfortSlider" class="slider" name="comfort" min="0" max="100" value="50">
+                <span class="slider-value" id="comfortValue">50</span>
+            </div>
+        </div>
+
+        <!-- Vulnerability -->
+        <div class="question">
+            <p>2. Vulnerability – I feel that the vehicle will take me to my destination safely.</p>
+            <div class="slider-container">
+                <span>0</span>
+                <input type="range" id="vulnerabilitySlider" class="slider" name="vulnerability" min="0" max="100" value="50">
+                <span class="slider-value" id="vulnerabilityValue">50</span>
+            </div>
+        </div>
+
+        <!-- Punctuality -->
+        <div class="question">
+            <p>3. Punctuality – I feel that the vehicle will take me to my destination on time.</p>
+            <div class="slider-container">
+                <span>0</span>
+                <input type="range" id="punctualitySlider" class="slider" name="punctuality" min="0" max="100" value="50">
+                <span class="slider-value" id="punctualityValue">50</span>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit">Submit Survey</button>
+    </form>
+
+    <!-- External JavaScript File -->
+    <script src="script.js"></script>
+</body>
+</html>
