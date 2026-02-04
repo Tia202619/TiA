@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Vehicle Experience Survey</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    h2 {
+      margin-bottom: 30px;
+    }
+
+    .question {
+      margin-bottom: 40px;
+    }
+
+    .question p {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+    }
+
+    button {
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Vehicle Experience Survey</h2>
+
+<div class="question">
+  <p>Comfort – I am at ease while the vehicle is en route.</p>
+  <input type="range" min="1" max="10" value="5" id="comfort">
+</div>
+
+<div class="question">
+  <p>Vulnerability – I feel that the vehicle will take me to my destination safely.</p>
+  <input type="range" min="1" max="10" value="5" id="vulnerability">
+</div>
+
+<div class="question">
+  <p>Punctuality – I feel that the vehicle will take me to my destination on time.</p>
+  <input type="range" min="1" max="10" value="5" id="punctuality">
+</div>
+
+<button id="submitBtn">Submit Response</button>
+
+<!-- Supabase JS CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="survey.js"></script>
+
+</body>
+</html>
