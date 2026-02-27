@@ -1,119 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Vehicle Experience Survey</title>
+<meta charset="utf-8">
+<title>Vehicle Experience Survey</title>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
+<style>
+body {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
 
-    h2 {
-      margin-bottom: 30px;
-    }
+h2 {
+  margin-bottom: 30px;
+}
 
-    .question {
-      margin-bottom: 60px;
-    }
+.question {
+  margin-bottom: 70px;
+}
 
-    .question p {
-      font-size: 18px;
-      margin-bottom: 15px;
-    }
+.question p {
+  font-size: 18px;
+  margin-bottom: 15px;
+}
 
-    .scale-container {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+.scale-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-    button {
-      font-size: 18px;
-      width: 40px;
-      height: 40px;
-      cursor: pointer;
-    }
+button {
+  font-size: 18px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
 
-    input[type="range"] {
-      flex: 1;
-    }
+.scale-wrapper {
+  position: relative;
+  flex: 1;
+}
 
-    .scale-labels {
-      display: flex;
-      justify-content: space-between;
-      font-size: 14px;
-      margin-top: 5px;
-    }
+input[type="range"] {
+  width: 100%;
+}
 
-    .marker {
-      font-weight: bold;
-      color: #0077cc;
-    }
+.marker {
+  position: absolute;
+  top: 30px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #0077cc;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
 
-    .value-display {
-      width: 60px;
-      text-align: center;
-      font-weight: bold;
-    }
-  </style>
+.value-display {
+  width: 60px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 18px;
+}
+</style>
 </head>
+
 <body>
 
 <h2>Vehicle Experience Survey</h2>
 
+<!-- COMFORT -->
 <div class="question">
-  <p>Comfort – I am at ease while the vehicle is en route.</p>
-  <div class="scale-container">
-    <button onclick="adjust('comfort', -1)">−</button>
-    <input type="range" id="comfort" min="0" max="100" value="50">
-    <button onclick="adjust('comfort', 1)">+</button>
-    <div class="value-display" id="comfort_value">50</div>
-  </div>
-  <div class="scale-labels">
-    <span id="comfort_min">0</span>
-    <span class="marker">0</span>
-    <span class="marker">100</span>
-    <span id="comfort_max">100</span>
-  </div>
+<p>Comfort – I am at ease while the vehicle is en route.</p>
+<div class="scale-container">
+<button onclick="adjust('comfort', -1)">−</button>
+
+<div class="scale-wrapper">
+<input type="range" id="comfort" min="0" max="100" value="50">
+<div class="marker" id="comfort_zero">0</div>
+<div class="marker" id="comfort_hundred">100</div>
 </div>
 
-<div class="question">
-  <p>Vulnerability – I feel that the vehicle will take me to my destination safely.</p>
-  <div class="scale-container">
-    <button onclick="adjust('vulnerability', -1)">−</button>
-    <input type="range" id="vulnerability" min="0" max="100" value="50">
-    <button onclick="adjust('vulnerability', 1)">+</button>
-    <div class="value-display" id="vulnerability_value">50</div>
-  </div>
-  <div class="scale-labels">
-    <span id="vulnerability_min">0</span>
-    <span class="marker">0</span>
-    <span class="marker">100</span>
-    <span id="vulnerability_max">100</span>
-  </div>
+<button onclick="adjust('comfort', 1)">+</button>
+<div class="value-display" id="comfort_value">50</div>
+</div>
 </div>
 
+<!-- VULNERABILITY -->
 <div class="question">
-  <p>Punctuality – I feel that the vehicle will take me to my destination on time.</p>
-  <div class="scale-container">
-    <button onclick="adjust('punctuality', -1)">−</button>
-    <input type="range" id="punctuality" min="0" max="100" value="50">
-    <button onclick="adjust('punctuality', 1)">+</button>
-    <div class="value-display" id="punctuality_value">50</div>
-  </div>
-  <div class="scale-labels">
-    <span id="punctuality_min">0</span>
-    <span class="marker">0</span>
-    <span class="marker">100</span>
-    <span id="punctuality_max">100</span>
-  </div>
+<p>Vulnerability – I feel that the vehicle will take me safely.</p>
+<div class="scale-container">
+<button onclick="adjust('vulnerability', -1)">−</button>
+
+<div class="scale-wrapper">
+<input type="range" id="vulnerability" min="0" max="100" value="50">
+<div class="marker" id="vulnerability_zero">0</div>
+<div class="marker" id="vulnerability_hundred">100</div>
 </div>
 
-<!-- Supabase JS -->
+<button onclick="adjust('vulnerability', 1)">+</button>
+<div class="value-display" id="vulnerability_value">50</div>
+</div>
+</div>
+
+<!-- PUNCTUALITY -->
+<div class="question">
+<p>Punctuality – I feel that the vehicle will take me on time.</p>
+<div class="scale-container">
+<button onclick="adjust('punctuality', -1)">−</button>
+
+<div class="scale-wrapper">
+<input type="range" id="punctuality" min="0" max="100" value="50">
+<div class="marker" id="punctuality_zero">0</div>
+<div class="marker" id="punctuality_hundred">100</div>
+</div>
+
+<button onclick="adjust('punctuality', 1)">+</button>
+<div class="value-display" id="punctuality_value">50</div>
+</div>
+</div>
+
+<!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="survey.js"></script>
 
