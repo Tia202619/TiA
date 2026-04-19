@@ -25,6 +25,8 @@ function updateSlider(id){
   const label100=document.getElementById(id+"_label_100")
 
   let value = s.value
+
+  // visual position still limited to bar
   let percent = Math.max(0, Math.min(100, value))
 
   thumb.style.left = percent + "%"
@@ -47,7 +49,7 @@ function adjust(id,step){
 }
 
 // =======================
-// DRAG
+// DRAG (pointer events)
 // =======================
 function setupDrag(id){
 
@@ -55,55 +57,42 @@ function setupDrag(id){
   const thumb=document.getElementById(id+"_thumb")
 
   let dragging=false
+  let startX=0
   let startValue=0
 
-  function startDrag(clientX){
-    dragging=true
-    startValue = sliders[id].value
-    moveAt(clientX)
-  }
+  function move(clientX){
+    const rect = track.getBoundingClientRect()
+    let deltaX = clientX - startX
+    let percentMove = deltaX / rect.width * 100
 
-  function moveAt(clientX){
-    const rect=track.getBoundingClientRect()
-    let percent = ((clientX - rect.left) / rect.width) * 100
-    percent = Math.max(0, Math.min(100, percent))
-
-    sliders[id].value = percent
+    sliders[id].value = startValue + percentMove
     updateSlider(id)
   }
 
-  function stopDrag(){
+  thumb.addEventListener("pointerdown",(e)=>{
+    dragging = true
+    startX = e.clientX
+    startValue = sliders[id].value
+    thumb.setPointerCapture(e.pointerId)
+  })
+
+  thumb.addEventListener("pointermove",(e)=>{
     if(!dragging) return
+    move(e.clientX)
+  })
+
+  thumb.addEventListener("pointerup",(e)=>{
+    if(!dragging) return
+
+    dragging = false
+    thumb.releasePointerCapture(e.pointerId)
+
+    logResponse() // ✅ save on release
+  })
+
+  thumb.addEventListener("pointercancel",()=>{
     dragging=false
-
-    // ✅ SAVE ONLY IF VALUE CHANGED
-    if(startValue !== sliders[id].value){
-      logResponse()
-    }
-  }
-
-  // MOUSE
-  thumb.addEventListener("mousedown",(e)=>{
-    e.preventDefault()
-    startDrag(e.clientX)
   })
-
-  document.addEventListener("mousemove",(e)=>{
-    if(dragging) moveAt(e.clientX)
-  })
-
-  document.addEventListener("mouseup",stopDrag)
-
-  // TOUCH
-  thumb.addEventListener("touchstart",(e)=>{
-    startDrag(e.touches[0].clientX)
-  })
-
-  document.addEventListener("touchmove",(e)=>{
-    if(dragging) moveAt(e.touches[0].clientX)
-  })
-
-  document.addEventListener("touchend",stopDrag)
 }
 
 // =======================
@@ -115,17 +104,17 @@ Object.keys(sliders).forEach(id=>{
 })
 
 // =======================
-// DATABASE
+// DATABASE (ROUNDED)
 // =======================
 async function logResponse(){
 
-  const data={
-    session_id:session_id,
-    task_value:sliders.task.value,
-    vulnerability_value:sliders.vulnerability.value
+  const data = {
+    session_id: session_id,
+    task_value: Math.round(sliders.task.value),
+    vulnerability_value: Math.round(sliders.vulnerability.value)
   }
 
-  console.log("Saving:", data) // 🔍 DEBUG
+  console.log("Saving:", data)
 
   const {error}=await supa
     .from("survey_responses")
