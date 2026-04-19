@@ -11,18 +11,6 @@ const sliders={
 }
 
 // =======================
-// DEBOUNCE (prevents spam)
-// =======================
-let logTimeout = null
-
-function debounceLog(){
-  clearTimeout(logTimeout)
-  logTimeout = setTimeout(() => {
-    logResponse()
-  }, 300) // logs after user pauses 300ms
-}
-
-// =======================
 // UPDATE UI
 // =======================
 function updateSlider(id){
@@ -45,23 +33,8 @@ function updateSlider(id){
 
   bubble.innerText = Math.round(value)
 
-  // label logic
-  let pos0 = 0
-  let pos100 = 100
-
-  if(value > 100){
-    pos100 = 100 - (value - 100)
-  }
-
-  if(value < 0){
-    pos0 = Math.abs(value)
-  }
-
-  pos0 = Math.max(0, Math.min(100, pos0))
-  pos100 = Math.max(0, Math.min(100, pos100))
-
-  label0.style.left = pos0 + "%"
-  label100.style.left = pos100 + "%"
+  label0.style.left = "0%"
+  label100.style.left = "100%"
 }
 
 // =======================
@@ -70,78 +43,67 @@ function updateSlider(id){
 function adjust(id,step){
   sliders[id].value += step
   updateSlider(id)
-  debounceLog() // ✅ live logging
+  logResponse()
 }
 
 // =======================
-// DRAG FUNCTION
+// DRAG
 // =======================
 function setupDrag(id){
 
   const track=document.getElementById(id+"_track")
   const thumb=document.getElementById(id+"_thumb")
 
-  let startX=0
-  let startValue=0
   let dragging=false
+  let startValue=0
 
+  function startDrag(clientX){
+    dragging=true
+    startValue = sliders[id].value
+    moveAt(clientX)
+  }
+
+  function moveAt(clientX){
+    const rect=track.getBoundingClientRect()
+    let percent = ((clientX - rect.left) / rect.width) * 100
+    percent = Math.max(0, Math.min(100, percent))
+
+    sliders[id].value = percent
+    updateSlider(id)
+  }
+
+  function stopDrag(){
+    if(!dragging) return
+    dragging=false
+
+    // ✅ SAVE ONLY IF VALUE CHANGED
+    if(startValue !== sliders[id].value){
+      logResponse()
+    }
+  }
+
+  // MOUSE
   thumb.addEventListener("mousedown",(e)=>{
-    e.stopPropagation()
-    dragging=true
-    startX = e.clientX
-    startValue = sliders[id].value
-
-    function onMove(e){
-      if(!dragging) return
-
-      const rect=track.getBoundingClientRect()
-      let deltaX = e.clientX - startX
-      let percentMove = deltaX / rect.width * 100
-
-      sliders[id].value = startValue + percentMove
-      updateSlider(id)
-
-      debounceLog() // ✅ LIVE WHILE DRAGGING
-    }
-
-    function onUp(){
-      dragging=false
-      document.removeEventListener("mousemove",onMove)
-      document.removeEventListener("mouseup",onUp)
-    }
-
-    document.addEventListener("mousemove",onMove)
-    document.addEventListener("mouseup",onUp)
+    e.preventDefault()
+    startDrag(e.clientX)
   })
 
-  // TOUCH SUPPORT
+  document.addEventListener("mousemove",(e)=>{
+    if(dragging) moveAt(e.clientX)
+  })
+
+  document.addEventListener("mouseup",stopDrag)
+
+  // TOUCH
   thumb.addEventListener("touchstart",(e)=>{
-    dragging=true
-    startX = e.touches[0].clientX
-    startValue = sliders[id].value
-
-    function onMove(e){
-      if(!dragging) return
-
-      const rect=track.getBoundingClientRect()
-      let deltaX = e.touches[0].clientX - startX
-      let percentMove = deltaX / rect.width * 100
-
-      sliders[id].value = startValue + percentMove
-      updateSlider(id)
-
-      debounceLog() // ✅ LIVE WHILE DRAGGING
-    }
-
-    function onEnd(){
-      dragging=false
-      document.removeEventListener("touchmove",onMove)
-      document.removeEventListener("touchend",onEnd)
-    }
-
-    document.addEventListener("touchmove",onMove)
-    document.addEventListener("touchend",onEnd)
+    startDrag(e.touches[0].clientX)
   })
+
+  document.addEventListener("touchmove",(e)=>{
+    if(dragging) moveAt(e.touches[0].clientX)
+  })
+
+  document.addEventListener("touchend",stopDrag)
 }
 
 // =======================
@@ -153,7 +115,7 @@ Object.keys(sliders).forEach(id=>{
 })
 
 // =======================
-// DATABASE LOGGING
+// DATABASE
 // =======================
 async function logResponse(){
 
@@ -163,9 +125,15 @@ async function logResponse(){
     vulnerability_value:sliders.vulnerability.value
   }
 
+  console.log("Saving:", data) // 🔍 DEBUG
+
   const {error}=await supa
     .from("survey_responses")
     .insert(data)
 
-  if(error) console.error("Supabase error:", error)
+  if(error){
+    console.error("Supabase ERROR:", error)
+  } else {
+    console.log("Saved successfully")
+  }
 }
