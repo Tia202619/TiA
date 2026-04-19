@@ -10,142 +10,162 @@ const sliders={
   vulnerability:{value:50}
 }
 
-// update UI
+// =======================
+// DEBOUNCE (prevents spam)
+// =======================
+let logTimeout = null
+
+function debounceLog(){
+  clearTimeout(logTimeout)
+  logTimeout = setTimeout(() => {
+    logResponse()
+  }, 300) // logs after user pauses 300ms
+}
+
+// =======================
+// UPDATE UI
+// =======================
 function updateSlider(id){
 
-const s=sliders[id]
+  const s=sliders[id]
 
-const thumb=document.getElementById(id+"_thumb")
-const bubble=document.getElementById(id+"_bubble")
-const fill=document.getElementById(id+"_fill")
+  const thumb=document.getElementById(id+"_thumb")
+  const bubble=document.getElementById(id+"_bubble")
+  const fill=document.getElementById(id+"_fill")
 
-const label0=document.getElementById(id+"_label_0")
-const label100=document.getElementById(id+"_label_100")
+  const label0=document.getElementById(id+"_label_0")
+  const label100=document.getElementById(id+"_label_100")
 
-let value = s.value
+  let value = s.value
+  let percent = Math.max(0, Math.min(100, value))
 
-let percent = Math.max(0, Math.min(100, value))
+  thumb.style.left = percent + "%"
+  bubble.style.left = percent + "%"
+  fill.style.width = percent + "%"
 
-thumb.style.left = percent + "%"
-bubble.style.left = percent + "%"
-fill.style.width = percent + "%"
+  bubble.innerText = Math.round(value)
 
-bubble.innerText = Math.round(value)
+  // label logic
+  let pos0 = 0
+  let pos100 = 100
 
-// label logic
-let pos0 = 0
-let pos100 = 100
+  if(value > 100){
+    pos100 = 100 - (value - 100)
+  }
 
-if(value > 100){
-  pos100 = 100 - (value - 100)
+  if(value < 0){
+    pos0 = Math.abs(value)
+  }
+
+  pos0 = Math.max(0, Math.min(100, pos0))
+  pos100 = Math.max(0, Math.min(100, pos100))
+
+  label0.style.left = pos0 + "%"
+  label100.style.left = pos100 + "%"
 }
 
-if(value < 0){
-  pos0 = Math.abs(value)
-}
-
-pos0 = Math.max(0, Math.min(100, pos0))
-pos100 = Math.max(0, Math.min(100, pos100))
-
-label0.style.left = pos0 + "%"
-label100.style.left = pos100 + "%"
-
-}
-
-// buttons
+// =======================
+// BUTTONS
+// =======================
 function adjust(id,step){
-sliders[id].value += step
-updateSlider(id)
-logResponse()
+  sliders[id].value += step
+  updateSlider(id)
+  debounceLog() // ✅ live logging
 }
 
-// DRAG
+// =======================
+// DRAG FUNCTION
+// =======================
 function setupDrag(id){
 
-const track=document.getElementById(id+"_track")
-const thumb=document.getElementById(id+"_thumb")
+  const track=document.getElementById(id+"_track")
+  const thumb=document.getElementById(id+"_thumb")
 
-let startX=0
-let startValue=0
-let dragging=false
+  let startX=0
+  let startValue=0
+  let dragging=false
 
-thumb.addEventListener("mousedown",(e)=>{
-e.stopPropagation()
-dragging=true
-startX = e.clientX
-startValue = sliders[id].value
+  thumb.addEventListener("mousedown",(e)=>{
+    e.stopPropagation()
+    dragging=true
+    startX = e.clientX
+    startValue = sliders[id].value
 
-function onMove(e){
-if(!dragging) return
+    function onMove(e){
+      if(!dragging) return
 
-const rect=track.getBoundingClientRect()
-let deltaX = e.clientX - startX
-let percentMove = deltaX / rect.width * 100
+      const rect=track.getBoundingClientRect()
+      let deltaX = e.clientX - startX
+      let percentMove = deltaX / rect.width * 100
 
-sliders[id].value = startValue + percentMove
-updateSlider(id)
+      sliders[id].value = startValue + percentMove
+      updateSlider(id)
+
+      debounceLog() // ✅ LIVE WHILE DRAGGING
+    }
+
+    function onUp(){
+      dragging=false
+      document.removeEventListener("mousemove",onMove)
+      document.removeEventListener("mouseup",onUp)
+    }
+
+    document.addEventListener("mousemove",onMove)
+    document.addEventListener("mouseup",onUp)
+  })
+
+  // TOUCH SUPPORT
+  thumb.addEventListener("touchstart",(e)=>{
+    dragging=true
+    startX = e.touches[0].clientX
+    startValue = sliders[id].value
+
+    function onMove(e){
+      if(!dragging) return
+
+      const rect=track.getBoundingClientRect()
+      let deltaX = e.touches[0].clientX - startX
+      let percentMove = deltaX / rect.width * 100
+
+      sliders[id].value = startValue + percentMove
+      updateSlider(id)
+
+      debounceLog() // ✅ LIVE WHILE DRAGGING
+    }
+
+    function onEnd(){
+      dragging=false
+      document.removeEventListener("touchmove",onMove)
+      document.removeEventListener("touchend",onEnd)
+    }
+
+    document.addEventListener("touchmove",onMove)
+    document.addEventListener("touchend",onEnd)
+  })
 }
 
-function onUp(){
-dragging=false
-document.removeEventListener("mousemove",onMove)
-document.removeEventListener("mouseup",onUp)
-logResponse()
-}
-
-document.addEventListener("mousemove",onMove)
-document.addEventListener("mouseup",onUp)
-
-})
-
-// TOUCH
-thumb.addEventListener("touchstart",(e)=>{
-dragging=true
-startX = e.touches[0].clientX
-startValue = sliders[id].value
-
-function onMove(e){
-if(!dragging) return
-
-const rect=track.getBoundingClientRect()
-let deltaX = e.touches[0].clientX - startX
-let percentMove = deltaX / rect.width * 100
-
-sliders[id].value = startValue + percentMove
-updateSlider(id)
-}
-
-function onEnd(){
-dragging=false
-document.removeEventListener("touchmove",onMove)
-document.removeEventListener("touchend",onEnd)
-logResponse()
-}
-
-document.addEventListener("touchmove",onMove)
-document.addEventListener("touchend",onEnd)
-
-})
-
-}
-
-// init
+// =======================
+// INIT
+// =======================
 Object.keys(sliders).forEach(id=>{
-setupDrag(id)
-updateSlider(id)
+  setupDrag(id)
+  updateSlider(id)
 })
 
-// DB
+// =======================
+// DATABASE LOGGING
+// =======================
 async function logResponse(){
 
-const data={
-session_id:session_id,
-task_value:sliders.task.value,
-vulnerability_value:sliders.vulnerability.value
-}
+  const data={
+    session_id:session_id,
+    task_value:sliders.task.value,
+    vulnerability_value:sliders.vulnerability.value
+  }
 
-const {error}=await supa.from("survey_responses").insert(data)
+  const {error}=await supa
+    .from("survey_responses")
+    .insert(data)
 
-if(error)console.error(error)
-
+  if(error) console.error("Supabase error:", error)
 }
