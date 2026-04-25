@@ -44,7 +44,7 @@ function updateSlider(id){
   let bottomPercent = ((0 - min) / range) * 100
 
   // ✅ spacing fix so labels don’t touch buttons
-  const OFFSET = 10
+  const OFFSET = 8
 
   topLabel.style.bottom = `calc(${topPercent}% - ${OFFSET}px)`
   bottomLabel.style.bottom = `calc(${bottomPercent}% + ${OFFSET}px)`
