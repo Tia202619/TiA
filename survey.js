@@ -11,7 +11,7 @@ const sliders={
 }
 
 // =======================
-// UPDATE UI (VERTICAL)
+// UPDATE UI
 // =======================
 function updateSlider(id){
 
@@ -21,18 +21,17 @@ function updateSlider(id){
   const bubble=document.getElementById(id+"_bubble")
   const fill=document.getElementById(id+"_fill")
 
-  let value = s.value
-  let percent = Math.max(0, Math.min(100, value))
+  let percent = Math.max(0, Math.min(100, s.value))
 
   thumb.style.bottom = percent + "%"
   fill.style.height = percent + "%"
 
   bubble.style.bottom = percent + "%"
-  bubble.innerText = Math.round(value)
+  bubble.innerText = Math.round(s.value)
 }
 
 // =======================
-// BUTTONS (DEBOUNCED LOGGING)
+// BUTTONS (DEBOUNCED)
 // =======================
 let saveTimeout
 
@@ -40,7 +39,6 @@ function adjust(id,step){
   sliders[id].value += step
   updateSlider(id)
 
-  // wait until user stops clicking
   clearTimeout(saveTimeout)
   saveTimeout = setTimeout(()=>{
     logResponse()
@@ -48,7 +46,7 @@ function adjust(id,step){
 }
 
 // =======================
-// DRAG (VERTICAL)
+// DRAG
 // =======================
 function setupDrag(id){
 
@@ -87,7 +85,7 @@ function setupDrag(id){
     dragging = false
     thumb.releasePointerCapture(e.pointerId)
 
-    logResponse() // only once on release ✅
+    logResponse()
   })
 
   thumb.addEventListener("pointercancel",()=>{
