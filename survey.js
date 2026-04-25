@@ -11,7 +11,7 @@ const sliders={
 }
 
 // =======================
-// UPDATE UI (DYNAMIC SCALE)
+// UPDATE UI (DYNAMIC SCALE + SPACING FIX)
 // =======================
 function updateSlider(id){
 
@@ -26,32 +26,35 @@ function updateSlider(id){
 
   let value = s.value
 
-  // ✅ Dynamic min/max
+  // ✅ Dynamic range
   let min = Math.min(0, value)
   let max = Math.max(100, value)
   let range = max - min
 
   let percent = ((value - min) / range) * 100
 
-  // Position slider
+  // Slider UI
   thumb.style.bottom = percent + "%"
   fill.style.height = percent + "%"
   bubble.style.bottom = percent + "%"
   bubble.innerText = Math.round(value)
 
-  // ✅ Move labels dynamically
+  // Label positions
   let topPercent = ((100 - min) / range) * 100
   let bottomPercent = ((0 - min) / range) * 100
 
-  topLabel.style.bottom = topPercent + "%"
-  bottomLabel.style.bottom = bottomPercent + "%"
+  // ✅ spacing fix so labels don’t touch buttons
+  const OFFSET = 10
+
+  topLabel.style.bottom = `calc(${topPercent}% - ${OFFSET}px)`
+  bottomLabel.style.bottom = `calc(${bottomPercent}% + ${OFFSET}px)`
 
   topLabel.innerText = 100
   bottomLabel.innerText = 0
 }
 
 // =======================
-// BUTTONS (DEBOUNCED)
+// BUTTON CONTROLS
 // =======================
 let saveTimeout
 
@@ -66,7 +69,7 @@ function adjust(id,step){
 }
 
 // =======================
-// DRAG
+// DRAG FUNCTIONALITY
 // =======================
 function setupDrag(id){
 
@@ -83,7 +86,6 @@ function setupDrag(id){
     let deltaY = startY - clientY
     let percentMove = deltaY / rect.height * 100
 
-    // dynamic range affects sensitivity slightly
     let min = Math.min(0, startValue)
     let max = Math.max(100, startValue)
     let range = max - min
@@ -128,7 +130,7 @@ Object.keys(sliders).forEach(id=>{
 })
 
 // =======================
-// DATABASE
+// DATABASE SAVE
 // =======================
 async function logResponse(){
 
