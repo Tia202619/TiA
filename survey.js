@@ -7,11 +7,11 @@ const session_id = crypto.randomUUID()
 
 const sliders={
   task:{value:50},
-  vulnerability:{value:50}
+  safety:{value:50}
 }
 
 // =======================
-// UPDATE UI
+// UPDATE UI (VERTICAL)
 // =======================
 function updateSlider(id){
 
@@ -21,35 +21,34 @@ function updateSlider(id){
   const bubble=document.getElementById(id+"_bubble")
   const fill=document.getElementById(id+"_fill")
 
-  const label0=document.getElementById(id+"_label_0")
-  const label100=document.getElementById(id+"_label_100")
-
   let value = s.value
-
-  // visual position still limited to bar
   let percent = Math.max(0, Math.min(100, value))
 
-  thumb.style.left = percent + "%"
-  bubble.style.left = percent + "%"
-  fill.style.width = percent + "%"
+  thumb.style.bottom = percent + "%"
+  fill.style.height = percent + "%"
 
+  bubble.style.bottom = percent + "%"
   bubble.innerText = Math.round(value)
-
-  label0.style.left = "0%"
-  label100.style.left = "100%"
 }
 
 // =======================
-// BUTTONS
+// BUTTONS (DEBOUNCED LOGGING)
 // =======================
+let saveTimeout
+
 function adjust(id,step){
   sliders[id].value += step
   updateSlider(id)
-  logResponse()
+
+  // wait until user stops clicking
+  clearTimeout(saveTimeout)
+  saveTimeout = setTimeout(()=>{
+    logResponse()
+  }, 600)
 }
 
 // =======================
-// DRAG (pointer events)
+// DRAG (VERTICAL)
 // =======================
 function setupDrag(id){
 
@@ -57,13 +56,14 @@ function setupDrag(id){
   const thumb=document.getElementById(id+"_thumb")
 
   let dragging=false
-  let startX=0
+  let startY=0
   let startValue=0
 
-  function move(clientX){
+  function move(clientY){
     const rect = track.getBoundingClientRect()
-    let deltaX = clientX - startX
-    let percentMove = deltaX / rect.width * 100
+
+    let deltaY = startY - clientY
+    let percentMove = deltaY / rect.height * 100
 
     sliders[id].value = startValue + percentMove
     updateSlider(id)
@@ -71,14 +71,14 @@ function setupDrag(id){
 
   thumb.addEventListener("pointerdown",(e)=>{
     dragging = true
-    startX = e.clientX
+    startY = e.clientY
     startValue = sliders[id].value
     thumb.setPointerCapture(e.pointerId)
   })
 
   thumb.addEventListener("pointermove",(e)=>{
     if(!dragging) return
-    move(e.clientX)
+    move(e.clientY)
   })
 
   thumb.addEventListener("pointerup",(e)=>{
@@ -87,7 +87,7 @@ function setupDrag(id){
     dragging = false
     thumb.releasePointerCapture(e.pointerId)
 
-    logResponse() // ✅ save on release
+    logResponse() // only once on release ✅
   })
 
   thumb.addEventListener("pointercancel",()=>{
@@ -104,14 +104,14 @@ Object.keys(sliders).forEach(id=>{
 })
 
 // =======================
-// DATABASE (ROUNDED)
+// DATABASE
 // =======================
 async function logResponse(){
 
   const data = {
     session_id: session_id,
     task_value: Math.round(sliders.task.value),
-    vulnerability_value: Math.round(sliders.vulnerability.value)
+    safety_value: Math.round(sliders.safety.value)
   }
 
   console.log("Saving:", data)
