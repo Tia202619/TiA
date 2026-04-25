@@ -12,7 +12,7 @@ body{
 }
 
 .question{
-  margin-bottom:60px;
+  margin-bottom:80px;
 }
 
 .question p{
@@ -20,10 +20,12 @@ body{
   margin-bottom:15px;
 }
 
+/* VERTICAL LAYOUT */
 .scale-container{
   display:flex;
+  flex-direction:column;
   align-items:center;
-  gap:12px;
+  gap:10px;
 }
 
 .button{
@@ -35,23 +37,24 @@ body{
 
 .slider-track{
   position:relative;
-  flex:1;
-  height:8px;
+  width:8px;
+  height:220px;
   background:#ddd;
   border-radius:6px;
 }
 
 .slider-fill{
   position:absolute;
-  height:100%;
+  bottom:0;
+  width:100%;
   background:#1e73be;
   border-radius:6px;
 }
 
 .slider-thumb{
   position:absolute;
-  top:50%;
-  transform:translate(-50%, -50%);
+  left:50%;
+  transform:translate(-50%, 50%);
   width:22px;
   height:22px;
   background:#1e73be;
@@ -61,8 +64,8 @@ body{
 
 .value-bubble{
   position:absolute;
-  top:-34px;
-  transform:translateX(-50%);
+  left:40px;
+  transform:translateY(50%);
   background:#1e73be;
   color:white;
   padding:4px 8px;
@@ -73,10 +76,17 @@ body{
 
 .label{
   position:absolute;
-  top:14px;
-  transform:translateX(-50%);
+  left:20px;
   font-size:12px;
   color:#555;
+}
+
+.label.top{
+  top:-5px;
+}
+
+.label.bottom{
+  bottom:-5px;
 }
 </style>
 </head>
@@ -85,39 +95,45 @@ body{
 
 <h2>Vehicle Experience Survey</h2>
 
-<!-- TASK FULFILLMENT (was punctuality, now first) -->
+<!-- TASK -->
 <div class="question">
 <p>Task Fulfillment</p>
-<div class="scale-container">
-<button class="button" onclick="adjust('task',-1)">−</button>
 
-<div class="slider-track" id="task_track">
-<div class="slider-fill" id="task_fill"></div>
-<div class="slider-thumb" id="task_thumb"></div>
-<div class="value-bubble" id="task_bubble"></div>
-<div class="label" id="task_label_0">0</div>
-<div class="label" id="task_label_100">100</div>
-</div>
+<div class="scale-container">
 
 <button class="button" onclick="adjust('task',1)">+</button>
+
+<div class="slider-track" id="task_track">
+  <div class="slider-fill" id="task_fill"></div>
+  <div class="slider-thumb" id="task_thumb"></div>
+  <div class="value-bubble" id="task_bubble"></div>
+  <div class="label top">100</div>
+  <div class="label bottom">0</div>
+</div>
+
+<button class="button" onclick="adjust('task',-1)">−</button>
+
 </div>
 </div>
 
-<!-- VULNERABILITY (second) -->
+<!-- SAFETY (renamed) -->
 <div class="question">
-<p>Vulnerability</p>
-<div class="scale-container">
-<button class="button" onclick="adjust('vulnerability',-1)">−</button>
+<p>Safety</p>
 
-<div class="slider-track" id="vulnerability_track">
-<div class="slider-fill" id="vulnerability_fill"></div>
-<div class="slider-thumb" id="vulnerability_thumb"></div>
-<div class="value-bubble" id="vulnerability_bubble"></div>
-<div class="label" id="vulnerability_label_0">0</div>
-<div class="label" id="vulnerability_label_100">100</div>
+<div class="scale-container">
+
+<button class="button" onclick="adjust('safety',1)">+</button>
+
+<div class="slider-track" id="safety_track">
+  <div class="slider-fill" id="safety_fill"></div>
+  <div class="slider-thumb" id="safety_thumb"></div>
+  <div class="value-bubble" id="safety_bubble"></div>
+  <div class="label top">100</div>
+  <div class="label bottom">0</div>
 </div>
 
-<button class="button" onclick="adjust('vulnerability',1)">+</button>
+<button class="button" onclick="adjust('safety',-1)">−</button>
+
 </div>
 </div>
 
