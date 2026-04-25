@@ -7,8 +7,12 @@
 <style>
 body{
   font-family: Arial, sans-serif;
-  max-width: 900px;
-  margin:40px auto;
+  max-width: 1000px;
+  margin:0 auto;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
 }
 
 /* SIDE BY SIDE */
@@ -45,10 +49,13 @@ body{
   cursor:pointer;
 }
 
+/* ✅ FIXED HERE */
 .slider-track{
   position:relative;
-  width:8px;
-  height:220px;
+  width:10px;
+  height:60vh;          /* responsive height */
+  min-height:300px;     /* prevents too small */
+  max-height:600px;     /* prevents too large */
   background:#ddd;
   border-radius:6px;
 }
