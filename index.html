@@ -15,7 +15,6 @@ body{
   justify-content:center;
 }
 
-/* SIDE BY SIDE */
 .survey-row{
   display:flex;
   justify-content:space-around;
@@ -34,7 +33,6 @@ body{
   margin-bottom:15px;
 }
 
-/* VERTICAL SLIDER */
 .scale-container{
   display:flex;
   flex-direction:column;
@@ -49,13 +47,12 @@ body{
   cursor:pointer;
 }
 
-/* ✅ FIXED HERE */
 .slider-track{
   position:relative;
   width:10px;
-  height:60vh;          /* responsive height */
-  min-height:300px;     /* prevents too small */
-  max-height:600px;     /* prevents too large */
+  height:60vh;
+  min-height:300px;
+  max-height:600px;
   background:#ddd;
   border-radius:6px;
 }
@@ -91,6 +88,7 @@ body{
   font-weight:bold;
 }
 
+/* ✅ Labels now fully dynamic */
 .label{
   position:absolute;
   left:20px;
@@ -98,15 +96,6 @@ body{
   color:#555;
 }
 
-.label.top{
-  top:-5px;
-}
-
-.label.bottom{
-  bottom:-5px;
-}
-
-/* MOBILE RESPONSIVE */
 @media (max-width:700px){
   .survey-row{
     flex-direction:column;
@@ -133,8 +122,8 @@ body{
         <div class="slider-fill" id="task_fill"></div>
         <div class="slider-thumb" id="task_thumb"></div>
         <div class="value-bubble" id="task_bubble"></div>
-        <div class="label top">100</div>
-        <div class="label bottom">0</div>
+        <div class="label" id="task_top">100</div>
+        <div class="label" id="task_bottom">0</div>
       </div>
 
       <button class="button" onclick="adjust('task',-1)">−</button>
@@ -152,8 +141,8 @@ body{
         <div class="slider-fill" id="safety_fill"></div>
         <div class="slider-thumb" id="safety_thumb"></div>
         <div class="value-bubble" id="safety_bubble"></div>
-        <div class="label top">100</div>
-        <div class="label bottom">0</div>
+        <div class="label" id="safety_top">100</div>
+        <div class="label" id="safety_bottom">0</div>
       </div>
 
       <button class="button" onclick="adjust('safety',-1)">−</button>
