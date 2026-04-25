@@ -11,23 +11,43 @@ const sliders={
 }
 
 // =======================
-// UPDATE UI
+// UPDATE UI (DYNAMIC SCALE)
 // =======================
 function updateSlider(id){
 
-  const s=sliders[id]
+  const s = sliders[id]
 
-  const thumb=document.getElementById(id+"_thumb")
-  const bubble=document.getElementById(id+"_bubble")
-  const fill=document.getElementById(id+"_fill")
+  const thumb = document.getElementById(id+"_thumb")
+  const bubble = document.getElementById(id+"_bubble")
+  const fill = document.getElementById(id+"_fill")
 
-  let percent = Math.max(0, Math.min(100, s.value))
+  const topLabel = document.getElementById(id+"_top")
+  const bottomLabel = document.getElementById(id+"_bottom")
 
+  let value = s.value
+
+  // ✅ Dynamic min/max
+  let min = Math.min(0, value)
+  let max = Math.max(100, value)
+  let range = max - min
+
+  let percent = ((value - min) / range) * 100
+
+  // Position slider
   thumb.style.bottom = percent + "%"
   fill.style.height = percent + "%"
-
   bubble.style.bottom = percent + "%"
-  bubble.innerText = Math.round(s.value)
+  bubble.innerText = Math.round(value)
+
+  // ✅ Move labels dynamically
+  let topPercent = ((100 - min) / range) * 100
+  let bottomPercent = ((0 - min) / range) * 100
+
+  topLabel.style.bottom = topPercent + "%"
+  bottomLabel.style.bottom = bottomPercent + "%"
+
+  topLabel.innerText = 100
+  bottomLabel.innerText = 0
 }
 
 // =======================
@@ -63,7 +83,13 @@ function setupDrag(id){
     let deltaY = startY - clientY
     let percentMove = deltaY / rect.height * 100
 
-    sliders[id].value = startValue + percentMove
+    // dynamic range affects sensitivity slightly
+    let min = Math.min(0, startValue)
+    let max = Math.max(100, startValue)
+    let range = max - min
+
+    sliders[id].value = startValue + (percentMove / 100) * range
+
     updateSlider(id)
   }
 
