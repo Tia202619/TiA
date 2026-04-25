@@ -7,12 +7,22 @@
 <style>
 body{
   font-family: Arial, sans-serif;
-  max-width: 800px;
+  max-width: 900px;
   margin:40px auto;
 }
 
+/* SIDE BY SIDE */
+.survey-row{
+  display:flex;
+  justify-content:space-around;
+  align-items:flex-start;
+  gap:80px;
+}
+
 .question{
-  margin-bottom:80px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
 
 .question p{
@@ -20,7 +30,7 @@ body{
   margin-bottom:15px;
 }
 
-/* VERTICAL LAYOUT */
+/* VERTICAL SLIDER */
 .scale-container{
   display:flex;
   flex-direction:column;
@@ -88,6 +98,14 @@ body{
 .label.bottom{
   bottom:-5px;
 }
+
+/* MOBILE RESPONSIVE */
+@media (max-width:700px){
+  .survey-row{
+    flex-direction:column;
+    align-items:center;
+  }
+}
 </style>
 </head>
 
@@ -95,46 +113,46 @@ body{
 
 <h2>Vehicle Experience Survey</h2>
 
-<!-- TASK -->
-<div class="question">
-<p>Task Fulfillment</p>
+<div class="survey-row">
 
-<div class="scale-container">
+  <!-- TASK -->
+  <div class="question">
+    <p>Task Fulfillment</p>
 
-<button class="button" onclick="adjust('task',1)">+</button>
+    <div class="scale-container">
+      <button class="button" onclick="adjust('task',1)">+</button>
 
-<div class="slider-track" id="task_track">
-  <div class="slider-fill" id="task_fill"></div>
-  <div class="slider-thumb" id="task_thumb"></div>
-  <div class="value-bubble" id="task_bubble"></div>
-  <div class="label top">100</div>
-  <div class="label bottom">0</div>
-</div>
+      <div class="slider-track" id="task_track">
+        <div class="slider-fill" id="task_fill"></div>
+        <div class="slider-thumb" id="task_thumb"></div>
+        <div class="value-bubble" id="task_bubble"></div>
+        <div class="label top">100</div>
+        <div class="label bottom">0</div>
+      </div>
 
-<button class="button" onclick="adjust('task',-1)">−</button>
+      <button class="button" onclick="adjust('task',-1)">−</button>
+    </div>
+  </div>
 
-</div>
-</div>
+  <!-- SAFETY -->
+  <div class="question">
+    <p>Safety</p>
 
-<!-- SAFETY (renamed) -->
-<div class="question">
-<p>Safety</p>
+    <div class="scale-container">
+      <button class="button" onclick="adjust('safety',1)">+</button>
 
-<div class="scale-container">
+      <div class="slider-track" id="safety_track">
+        <div class="slider-fill" id="safety_fill"></div>
+        <div class="slider-thumb" id="safety_thumb"></div>
+        <div class="value-bubble" id="safety_bubble"></div>
+        <div class="label top">100</div>
+        <div class="label bottom">0</div>
+      </div>
 
-<button class="button" onclick="adjust('safety',1)">+</button>
+      <button class="button" onclick="adjust('safety',-1)">−</button>
+    </div>
+  </div>
 
-<div class="slider-track" id="safety_track">
-  <div class="slider-fill" id="safety_fill"></div>
-  <div class="slider-thumb" id="safety_thumb"></div>
-  <div class="value-bubble" id="safety_bubble"></div>
-  <div class="label top">100</div>
-  <div class="label bottom">0</div>
-</div>
-
-<button class="button" onclick="adjust('safety',-1)">−</button>
-
-</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
